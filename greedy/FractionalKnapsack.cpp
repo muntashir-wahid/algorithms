@@ -1,36 +1,39 @@
-#include <algorithm>
-
 #include "FractionalKnapsack.hpp"
 
+#include <algorithm>
 
+using namespace std;
 
-bool compareProfit(const std::vector<int> &firstItem, const std::vector<int> &secondItem) {
-    if(double(firstItem[0] / firstItem[1]) > double(secondItem[0] / secondItem[1])) {
+bool compareProfit(const pair<int, int> &currItem, const pair<int, int> &nextItem) {
+    if((double(currItem.second) / double(currItem.first)) > (double(nextItem.second) / double(nextItem.first))) {
         return true;
     } else {
         return false;
     }
 }
 
-
-double knapSack(std::vector<std::vector<int>> &items, int capacity) {
-    std::sort(items.begin(), items.end(), compareProfit);
+double findMaxProfit(vector<int> weight, vector<int> profit, int capacity) {
+    vector<pair<int, int>> items;
     
-    int remainingCapacity = capacity;
-    double profit = 0;
+    for(size_t i = 0; i < weight.size(); i++) {
+        items.push_back(make_pair(weight[i], profit[i]));
+    }
+    
+    sort(items.begin(), items.end(), compareProfit);
+    
+    double remainingCapacity = capacity;
+    double totalProfit= 0.0;
     
     for(size_t i = 0; i < items.size(); i++) {
-        if(remainingCapacity < items[i][1]) {
-            profit += double(remainingCapacity) * (double(items[i][0] / items[i][1]));
-            break;
+        if(remainingCapacity - items[i].first > 0) {
+            remainingCapacity -= items[i].first;
+            totalProfit += double(items[i].second);
         } else {
-            profit += items[i][0];
-            remainingCapacity -= items[i][1];
-            
+            totalProfit += remainingCapacity * ((double(items[i].second)) /  (double(items[i].first)));
+            break;
         }
     }
-        
-    return profit;
+    
+    return totalProfit;
 }
-
 
